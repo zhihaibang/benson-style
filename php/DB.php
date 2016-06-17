@@ -125,7 +125,7 @@ class DB
     /**
      * 关闭数据库连接
      */
-    function closeDB()
+    private function closeDB()
     {
         if ($this->db) {
             $this->db = null;
