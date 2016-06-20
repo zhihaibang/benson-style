@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<proxy>
+    <acceptor timeout="60">
+        <entry type="tcp" if="eth0" port="14008" />
+        <entry type="udp" if="eth0" port="14008" />
+    </acceptor>
+    <connector>
+        <entry groupid="1" />
+    </connector>
+    <flog level="3" />
+    <log level="3" />
+    <module bin="../lib/libproxy.so" etc="" />
+    <stat file="../stat/module_stat_spp_proxy.dat"/>
+</proxy>

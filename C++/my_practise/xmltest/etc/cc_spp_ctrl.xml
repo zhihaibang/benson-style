@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<controller>
+    <procmon>
+        <group id="0" exe="spp_proxy" etc="../etc/cc_spp_proxy.xml" maxprocnum="1" minprocnum="1" />
+        <group id="1" exe="spp_worker" etc="../etc/cc_spp_worker.xml" maxprocnum="4" minprocnum="4" />
+    </procmon>
+    <report exe="./spp_dc_tool" />
+</controller>
