@@ -8,6 +8,9 @@ import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.IvParameterSpec;
 import it.sauronsoftware.base64.Base64;
  
+/**
+* DES加密，使用CBC方式，偏移量为0	
+*/
 public class DesUtil {
 
 	 public static final String ALGORITHM_DES = "DES/CBC/PKCS5Padding";

@@ -1,5 +1,8 @@
 <?php
 
+/**
+* DES加密，使用CBC方式，偏移量为0
+*/
 class DES {
 
     var $key;
