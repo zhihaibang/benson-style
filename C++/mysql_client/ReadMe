@@ -1,0 +1,6 @@
+主要问题：
+1. mysql_real_connect/mysql_init 多线程环境下调用需要加锁。
+2. 在相同的连接上，两个线程不能同时将查询发送到MySQL服务器。在mysql_query()之前加上线程锁，在mysql_store_result()之后释放线程锁.
+3. 出现segment fault错误，基本是因为访问非法内存，以及重复释放资源。
+调用mysql_free_result()和mysql_close()前一定要判断传入参数是否合法。
+否则会出现segmentation fault错误。

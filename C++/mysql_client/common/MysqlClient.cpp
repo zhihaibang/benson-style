@@ -34,25 +34,27 @@ int MysqlClient::Initialize(DbConfig db_config)
 		sprintf(error_msg,"invalid mysql config");
 		return -1;
 	}
-	 
-	if (mysql_init(&connection) == NULL)
-    {
-        sprintf(error_msg,"mysql initialize fail, error: %s",mysql_error(&connection));
-		return -1;
-	}
-	
+		
 	return Connect();
 }
 
 
 int MysqlClient::Connect()
 {	
-    pthread_mutex_lock(&lock);
+	pthread_mutex_lock(&lock);
 	if (is_connected)
     {
+		pthread_mutex_unlock(&lock);
 		return 0;
 	}
-
+		
+	if (mysql_init(&connection) == NULL)
+    {
+        sprintf(error_msg,"mysql initialize fail, error: %s",mysql_error(&connection));
+		pthread_mutex_unlock(&lock);
+		return -1;
+	}
+			
     int ret = -1;
 	if (mysql_real_connect(&connection,
                             config.db_host.c_str(),
@@ -84,34 +86,34 @@ int MysqlClient::Connect()
                 mysql_error(&connection));
         ret = -1;
 	}
+	
 	pthread_mutex_unlock(&lock);
+	
 	return ret;
 }
 
 int MysqlClient::Reconnect()
 {
-    if (is_connected) {
-        mysql_close(&connection);
-		is_connected = false;
-	}
-
+    CloseConnect();
 	return Connect();
 }
 
 int MysqlClient::CloseConnect()
 {
-	if (is_connected) {
-    	pthread_mutex_lock(&lock);
+	pthread_mutex_lock(&lock);
+	if (is_connected && &connection)
+	{
 		mysql_close(&connection);
-    	pthread_mutex_unlock(&lock);
+		is_connected = false;
 	}
+	pthread_mutex_unlock(&lock);
 	return 0;
 }
 
 int MysqlClient::SetDb(const string &name) {
 	if (mysql_ping(&connection) != 0)
     {
-        sprintf(error_msg,"mysql connection is down, error: %s. try reconnect",mysql_error(&connection));
+        sprintf(error_msg,"mysql connection goes down, error: %s. try reconnect",mysql_error(&connection));
 		if (Reconnect() != 0) {
 		    sprintf(error_msg,"reconnect failed. error: %s",mysql_error(&connection));
 			return -1;
@@ -138,17 +140,22 @@ int MysqlClient::ExecuteSql(const string &sql)
 		}
 	}
 	
+	pthread_mutex_lock(&lock);
+		
 	if (mysql_query(&connection, sql.c_str()) != 0) {
         sprintf(error_msg,"execute sql failed. error: %s",mysql_error(&connection));
+		pthread_mutex_unlock(&lock);
 		return -1;
 	}
-
+	
     result = mysql_store_result(&connection);
 	if (result == NULL && mysql_errno(&connection) != 0) {
 		sprintf(error_msg,"store result failed. error: %s",mysql_error(&connection));
+		pthread_mutex_unlock(&lock);
 		return -1;
 	}
-
+	
+	pthread_mutex_unlock(&lock);
 	return 0;
 }
 
@@ -175,7 +182,8 @@ int MysqlClient::GetResult(ResultData &data)
 		}
 		data.push_back(row);
 	}
-	mysql_free_result(result);
+	mysql_free_result(result);//只是释放空间，并不把result置为null
+	result = NULL;//置为null，以后释放时需判断
 	return 0;
 }
 

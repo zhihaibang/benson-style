@@ -8,13 +8,13 @@ using namespace std;
 int main()
 {
     string db_host = "192.168.144.119";
-    int db_port = 3306;
+    uint16_t db_port = 3306;
     string db_account = "root";
     string db_password = "mysql";
     string db_name = "test";
     string charset = "utf8";
 
-    struct DbConfig db_config;
+    DbConfig db_config;
     db_config.db_host = db_host;
     db_config.db_port = db_port;
     db_config.db_account = db_account;
@@ -30,7 +30,7 @@ int main()
         return -1;
     }
 
-    string sql = "insert into Persons(Id_P,LastName,FirstName,Address,City) values (6,'王','小明','长安街','北京')";
+    string sql = "insert into Persons values (12,'王','小名','长安街','北京')";
     ret = mysql->ExecuteSql(sql);
     if(ret != 0)
     {
@@ -43,13 +43,6 @@ int main()
     {
         cout<<"insert fail"<<endl;
     }
-	
-	ret = mysql->SetDbCharacter();
-	if(ret != 0)
-    {
-        cout<<mysql->GetErrMsg()<<endl;
-        return -1;
-    }
 
     sql = "select * from Persons";
     ret = mysql->ExecuteSql(sql);
@@ -61,11 +54,10 @@ int main()
 
     ResultData result;
     mysql->GetResult(result);
-		
     ResultData::iterator it = result.begin();
     while(it != result.end())
     {
-        vector<string> row = *it;
+        vector<string> row  = *it;
         vector<string>::iterator it_row = row.begin();
         while(it_row != row.end())
         {
@@ -75,5 +67,7 @@ int main()
         cout<<endl;
 		++it;
     }
+    //delete mysql;
+	mysql->CloseConnect();
     return 0;
 }
