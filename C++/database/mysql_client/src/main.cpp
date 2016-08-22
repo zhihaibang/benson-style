@@ -35,7 +35,6 @@ int main()
     if(ret != 0)
     {
         cout<<mysql->GetErrMsg()<<endl;
-        return -1;
     }
 
     ret = mysql->GetAffectedRows();
@@ -49,7 +48,6 @@ int main()
     if(ret != 0)
     {
         cout<<mysql->GetErrMsg()<<endl;
-        return -1;
     }
 
     ResultData result;
