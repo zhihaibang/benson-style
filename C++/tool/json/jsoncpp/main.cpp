@@ -4,10 +4,29 @@
 
 using namespace std;
 
+int genjson(Json::Value &root);
+int readjson(string &upload_id,int &code);
+
 int main()
 {
-    Json::Value root;
-    root["status"] = 1;
+	Json::Value root;
+	genjson(root);
+
+	Json::FastWriter fast_writer;
+	string data_str = fast_writer.write(root);
+
+	cout<<data_str<<endl;
+	
+	string upload_id;
+	int code;
+	readjson(upload_id,code);
+	cout<<"upload_id:"<<upload_id<<"\ncode:"<<code<<endl;
+    return 0;
+}
+
+int genjson(Json::Value &root)
+{
+	root["status"] = 1;
     root["msg"] = "";
 
     Json::Value data;
@@ -37,9 +56,19 @@ int main()
     data["models"] = model_array;
     root["data"] = data;
 
-    Json::FastWriter fast_writer;
-	string data_str = fast_writer.write(root);
-
-	cout<<data_str<<endl;
     return 0;
+}
+
+int readjson(string &upload_id,int &code)
+{
+	const char* str = "{\"uploadid\": \"UP000000\",\"code\": 100,\"msg\": \"\",\"files\": \"\"}";  
+
+    Json::Reader reader;  
+    Json::Value root;  
+    if (reader.parse(str, root))  // reader将Json字符串解析到root，root将包含Json里所有子元素  
+    {  
+        upload_id = root["uploadid"].asString();  // 访问节点，upload_id = "UP000000"  
+        code = root["code"].asInt();    // 访问节点，code = 100 
+    }  
+	return 0;
 }
