@@ -26,7 +26,8 @@ int main()
 
 int genjson(Json::Value &root)
 {
-	root["status"] = 1;
+	long long status = 1232;
+	root["status"] = status;
     root["msg"] = "";
 
     Json::Value data;
@@ -52,8 +53,13 @@ int genjson(Json::Value &root)
 
     Json::Value model_array;
     model_array.append(model_peer);
-
-    data["models"] = model_array;
+	data["models"] = model_array;
+	
+	Json::Value nums;
+	nums[0] = 1;
+	nums[1] = 2;    
+	data["nums"] = nums;
+	
     root["data"] = data;
 
     return 0;
