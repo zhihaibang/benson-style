@@ -13,7 +13,10 @@ ConsistentHash::ConsistentHash(int node_num, int virtual_node_num)
 
 ConsistentHash::~ConsistentHash()
 {
-	server_nodes_.clear();
+	if(!server_nodes_.empty())
+	{
+		server_nodes_.clear();
+	}
 }
 
 
