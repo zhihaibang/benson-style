@@ -10,7 +10,7 @@
  *
  * =====================================================================================
  */
-
+#include <stdio.h>
 #include "hiredis.h"
 #include "redis_client.h"
 #include "redis_sortedset.h"
@@ -57,19 +57,18 @@ int RedisSortedSet::Zadd(const std::string &key, const long score, const std::st
 
 int RedisSortedSet::ZrangeByScore(const std::string &key, const long min, const long max, std::vector<std::string> &members, const bool withscore)
 {
-  const char* withscore_str = "";
+  std::string command = "ZRANGEBYSCORE %b %ld %ld";
   if(withscore){
-    withscore_str = "WITHSCORES";
+	command = "ZRANGEBYSCORE %b %ld %ld WITHSCORES";
   }
-
+  
   redisReply *reply = (redisReply *)redisCommand(
     c_,
-    "ZRANGEBYSCORE %b %ld %ld %s",
+    command.c_str(),
     key.c_str(),
     key.size(),
     min,
-    max,
-    withscore_str
+    max
   );
 
   int ret = -1;
@@ -85,8 +84,13 @@ int RedisSortedSet::ZrangeByScore(const std::string &key, const long min, const 
       case REDIS_REPLY_ARRAY://返回数组
 		len = reply->elements;
 		for(int i=0;i<len;++i){
-			std::string value = reply->element[i]->str;
-			members.push_back(value);
+			redisReply* childReply = reply->element[i];
+			if(childReply->type == REDIS_REPLY_STRING)
+			{
+				std::string value;				
+				value.assign(childReply->str, childReply->len);
+				members.push_back(value);				
+			}			
 		}
         ret = 0;
         break;
@@ -94,12 +98,12 @@ int RedisSortedSet::ZrangeByScore(const std::string &key, const long min, const 
         ret = 0;
         break;
       case REDIS_REPLY_ERROR:
-        err_ = -1;
+        err_ = -2;
         errstr_.assign(reply->str, reply->len);
         break;
       default:
-        errstr_.assign("invalid type of reply");
-        ret = -1;
+      	err_ = -3;
+        errstr_.assign("invalid type of reply");       
         break;
     }
 

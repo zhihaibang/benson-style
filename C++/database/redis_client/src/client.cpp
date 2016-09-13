@@ -87,7 +87,7 @@ void redis_sortedset()
 
 	string key = "zzhb";
 	
-	int count = 10000;
+	int count = 10;
 	string member = "list";
 	long start = time(NULL);
 	
@@ -120,10 +120,10 @@ void redis_sortedset()
 		printf("zrangebyscore zset success\n");
 		int len = members.size();
 		for(int i=0;i<len;++i){
-			//printf("members[%d]:%s\n",i,members[i].c_str());
+			printf("members[%d]:%s\n",i,members[i].c_str());
 		}
 	}else{
-		printf("zrangebyscore zset fail,err:%s\n",  redis->errstr());
+		printf("zrangebyscore zset fail,ret:%d, err:%s\n", ret, redis->errstr());
 	}
 	
 	interval = (tv_end.tv_sec - tv_begin.tv_sec)*1000000 + (tv_end.tv_usec - tv_begin.tv_usec);
