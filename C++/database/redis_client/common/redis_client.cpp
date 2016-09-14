@@ -74,38 +74,38 @@ void RedisClient::Close() {
   }
 }
 
-int RedisClient::DBSize(int *sz) {
+int RedisClient::DBSize(int *sz) 
+{
   redisReply *reply = (redisReply *)redisCommand(c_, "dbsize");
-
-  int ret = -1;
 
   if (!reply) {
     if (c_->err) {
       err_ = c_->err;
       errstr_.assign(c_->errstr);
     }
-  } else {
-    switch (reply->type) {
-      case REDIS_REPLY_INTEGER:
-        *sz = reply->integer;
-        ret = 0;
-        break;
-      case REDIS_REPLY_NIL:
-        ret = 0;
-        break;
-      case REDIS_REPLY_ERROR:
-        err_ = -1;
-        errstr_.assign(reply->str, reply->len);
-        break;
-      default:
-        errstr_.assign("invalid type of reply");
-        ret = -1;
-        break;
-    }
-
-    freeReplyObject(reply);
+    return -1;
+  }
+  
+  int ret = -1;
+  switch (reply->type) {
+    case REDIS_REPLY_INTEGER:
+      *sz = reply->integer;
+      ret = 0;
+      break;
+    case REDIS_REPLY_NIL:
+      ret = 0;
+      break;
+    case REDIS_REPLY_ERROR:
+      err_ = -1;
+      errstr_.assign(reply->str, reply->len);
+      break;
+    default:
+      errstr_.assign("invalid type of reply");
+      ret = -1;
+      break;
   }
 
+  freeReplyObject(reply);
   return ret;
 }
 

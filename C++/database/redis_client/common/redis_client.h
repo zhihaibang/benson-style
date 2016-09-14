@@ -20,6 +20,12 @@
 #include <string>
 #include <stdint.h>
 
+#define kRedisContextError 0x1
+#define kReplyError 0x2
+#define kInvalidType 0x3
+#define kUnknownErrror 0x4
+
+
 class RedisClient {
   public:
     RedisClient();

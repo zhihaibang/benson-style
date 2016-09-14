@@ -26,8 +26,8 @@ class RedisSortedSet : public RedisClient {
   public:
     int Zadd(const std::string &key, const long score, const char *member, size_t len);
     int Zadd(const std::string &key, const long score, const std::string &member);
-    int ZrangeByScore(const std::string &key, const long min, const long max, std::vector<std::string> &members, const bool withscore=true);
-    int ZremRangeByScore(const std::string &key, const long min, const long max);
+    int ZrangeByScore(const std::string &key, const long min, const long max, std::vector<std::string> &members, const bool withscore = false);
+    int ZremRangeByScore(const std::string &key, const long min, const long max, long long &remove_count);
 
 };
 
