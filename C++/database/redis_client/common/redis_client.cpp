@@ -110,6 +110,38 @@ int RedisClient::DBSize(int *sz)
   return ret;
 }
 
+
+int RedisClient::Expire(const string &key, const long time)
+{
+  redisReply *reply = (redisReply *)redisCommand(
+    c_,
+    "expire %b %ld",
+    key.c_str(),
+    key.size(),
+    time
+  );
+
+  if (!reply) {
+    if (c_->err) {
+      err_ = kRedisContextError;
+      errstr_.assign(c_->errstr);
+    }
+    return -1;
+  }
+
+  int ret = -1;
+  if (REDIS_REPLY_ERROR == reply->type) {
+    err_ = kReplyError;
+    errstr_.assign(reply->str, reply->len);
+  } else {
+    ret = 0;
+  }
+
+  freeReplyObject(reply);
+  return ret;
+}
+
+
 int RedisClient::DeleteKey(const std::string &key)
 {
   redisReply *reply = (redisReply *)redisCommand(
