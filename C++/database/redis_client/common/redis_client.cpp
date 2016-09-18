@@ -109,6 +109,39 @@ int RedisClient::DBSize(int *sz)
   return ret;
 }
 
+int RedisClient::DeleteKey(const std::string &key)
+{
+  redisReply *reply = (redisReply *)redisCommand(
+    c_,
+    "del %b",
+    key.c_str(),
+    key.size()
+  );
+
+  if (!reply) {
+    if (c_->err) {
+      err_ = kRedisContextError;
+      errstr_.assign(c_->errstr);
+    }
+    return -1;
+  }
+
+  int ret = -1;
+  if (REDIS_REPLY_ERROR == reply->type) {
+    err_ = kReplyError;
+    errstr_.assign(reply->str, reply->len);
+  } else if(REDIS_REPLY_INTEGER == reply->type){
+    if(reply->integer >= 0){
+      ret = 0;
+    }
+  } else {
+    err_ = kUnknownErrror;
+  }
+  
+  freeReplyObject(reply);
+  return ret;
+}
+
 int RedisClient::err() {
   return err_;
 }

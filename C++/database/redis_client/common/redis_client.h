@@ -35,6 +35,7 @@ class RedisClient {
     int ReConnect();
     void Close(); 
     int DBSize(int *sz);//返回当前数据库中key的数目
+	int DeleteKey(const std::string &key);
     int err();
     const char *errstr();
   protected:

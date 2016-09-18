@@ -45,12 +45,22 @@ void redis_string()
 		printf("set string fail,err_code:%d,err_msg:%s\n", redis->err(),redis->errstr());
 	}
 	
-	redis->Get("szhb",value);
+	ret = redis->DeleteKey(key);
 	if(ret == 0){
-		printf("get string success,value=%s\n\n", value.c_str());
+		printf("delete key success,key=%s\n", key.c_str());
+	}else{
+		printf("delete key fail,err_code:%d,err_msg:%s\n", redis->err(),redis->errstr());
+	}
+	
+	string value_get;
+	ret = redis->Get(key,value_get);
+	if(ret == 0){
+		printf("get string success,value=%s\n\n", value_get.c_str());
 	}else{
 		printf("get string fail,err_code:%d,err_msg:%s\n\n", redis->err(), redis->errstr());
 	}
+	
+	
 	redis->Close();
 }
 
