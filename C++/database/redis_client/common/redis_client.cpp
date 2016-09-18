@@ -96,10 +96,11 @@ int RedisClient::DBSize(int *sz)
       ret = 0;
       break;
     case REDIS_REPLY_ERROR:
-      err_ = -1;
+      err_ = kReplyError;
       errstr_.assign(reply->str, reply->len);
       break;
     default:
+	  err_ = kInvalidType;
       errstr_.assign("invalid type of reply");
       ret = -1;
       break;
