@@ -180,7 +180,7 @@ int RedisHash::HDel(const string &key, const string &field)
       ret = 0;
     }
   } else {
-    err_ = kUnknownErrror;
+    err_ = kUnknownError;
   }
   
   freeReplyObject(reply);

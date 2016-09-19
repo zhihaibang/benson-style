@@ -20,12 +20,13 @@
 #include "redis_client.h"
 #include <string>
 #include <stdint.h>
+using namespace std;
 
 class RedisList : public RedisClient {
   public:
-    int Push(const std::string &key, const std::string &value);
-    int Push(const std::string &key, const char *value, size_t len);
-    int Pop(const std::string &key, std::string &value);
+    int Push(const string &key, const string &value);
+    int Push(const string &key, const char *value, size_t len);
+    int Pop(const string &key, string &value);
 };
 
 #endif //__REDISLIST_H__

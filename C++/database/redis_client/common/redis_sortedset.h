@@ -21,13 +21,14 @@
 #include <string>
 #include <vector>
 #include <stdint.h>
+using namespace std;
 
 class RedisSortedSet : public RedisClient {
   public:
-    int Zadd(const std::string &key, const long score, const char *member, size_t len);
-    int Zadd(const std::string &key, const long score, const std::string &member);
-    int ZrangeByScore(const std::string &key, const long min, const long max, std::vector<std::string> &members, const bool withscore = false);
-    int ZremRangeByScore(const std::string &key, const long min, const long max, long long &remove_count);
+    int Zadd(const string &key, const long score, const char *member, size_t len);
+    int Zadd(const string &key, const long score, const string &member);
+    int ZrangeByScore(const string &key, const long min, const long max, vector<string> &members, const bool withscore = false);
+    int ZremRangeByScore(const string &key, const long min, const long max, long long &remove_count);
 
 };
 

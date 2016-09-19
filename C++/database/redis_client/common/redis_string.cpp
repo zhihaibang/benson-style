@@ -14,8 +14,9 @@
 #include "redis_client.h"
 #include "redis_string.h"
 #include <string>
+using namespace std;
 
-int RedisString::Set(const std::string &key, const char *value, size_t len) 
+int RedisString::Set(const string &key, const char *value, size_t len) 
 {
   redisReply *reply = (redisReply *)redisCommand(
     c_,
@@ -46,12 +47,12 @@ int RedisString::Set(const std::string &key, const char *value, size_t len)
   return ret;
 }
 
-int RedisString::Set(const std::string &key, const std::string &value) 
+int RedisString::Set(const string &key, const string &value) 
 {
   return Set(key, value.data(), value.size());
 }
 
-int RedisString::SetEX(const std::string &key, const char *value, size_t len, int ms) 
+int RedisString::SetEX(const string &key, const char *value, size_t len, int ms) 
 {
   redisReply *reply = (redisReply *)redisCommand(
     c_,
@@ -83,12 +84,12 @@ int RedisString::SetEX(const std::string &key, const char *value, size_t len, in
   return ret;
 }
 
-int RedisString::SetEX(const std::string &key, const std::string &value, int ms) 
+int RedisString::SetEX(const string &key, const string &value, int ms) 
 {
   return SetEX(key, value.data(), value.size(), ms);
 }
 
-int RedisString::Get(const std::string &key, std::string &value)
+int RedisString::Get(const string &key, string &value)
 {
   redisReply *reply = (redisReply *)redisCommand(
     c_,

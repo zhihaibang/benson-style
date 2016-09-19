@@ -19,6 +19,7 @@ void redis_string();
 void redis_list();
 void redis_sortedset();
 void redis_hash();
+void redis_transaction();
 
 int main()
 {
@@ -26,6 +27,7 @@ int main()
 	redis_list();
 	redis_hash();
 	redis_sortedset();
+	redis_transaction();
 	return 0;
 }
 
@@ -43,6 +45,20 @@ void redis_string()
 		printf("set string success,key=%s,value=%s\n", key.c_str(), value.c_str());
 	}else{
 		printf("set string fail,err_code:%d,err_msg:%s\n", redis->err(),redis->errstr());
+	}
+	
+	ret = redis->Expire(key,20);
+	if(ret == 0)
+	{
+		printf("set expire time success\n");
+	}
+	
+	vector<string> keys;
+	redis->GetAllKeys(keys);
+	printf("\nget all keys:\n");
+	for(vector<string>::iterator it = keys.begin();it != keys.end(); ++it)
+	{
+		printf("%s\n",it->c_str());
 	}
 	
 	ret = redis->DeleteKey(key);
@@ -223,6 +239,38 @@ void redis_sortedset()
 		printf("zrangebyscore zset success,vector size:%d\n",(int)members.size());
 	}else{
 		printf("zrangebyscore zset fail, err_code:%d,err_msg:%s\n", redis->err(), redis->errstr());
+	}
+	
+	redis->Close();
+}
+
+
+void redis_transaction()
+{
+	const char* hostname = HOSTNAME;
+	uint16_t port = PORT;
+	RedisHash* redis = new RedisHash();
+	int ret = redis->Connect(hostname,port);
+
+	string key = "hzhb";
+
+	redis->WatchKey(key);
+	
+	redis->BeginTransaction();
+	
+	string value;
+	redis->HGet(key,"field1",value);
+	redis->HSet(key,"field1","value1");
+	redis->HGet(key,"field1",value);
+
+	ret = redis->ExecTransaction();
+	if(ret != 0)
+	{
+		printf("transaction exec fail, err_code:%d,err_msg:%s\n", redis->err(), redis->errstr());
+	}
+	else
+	{
+		printf("transaction exec success!\n");
 	}
 	
 	redis->Close();

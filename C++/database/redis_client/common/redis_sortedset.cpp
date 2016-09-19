@@ -16,8 +16,9 @@
 #include "redis_sortedset.h"
 #include <string>
 #include <vector>
+using namespace std;
 
-int RedisSortedSet::Zadd(const std::string &key, const long score, const char *member, size_t len)
+int RedisSortedSet::Zadd(const string &key, const long score, const char *member, size_t len)
 {
   redisReply *reply = (redisReply *)redisCommand(
     c_,
@@ -49,14 +50,14 @@ int RedisSortedSet::Zadd(const std::string &key, const long score, const char *m
   return ret;
 }
 
-int RedisSortedSet::Zadd(const std::string &key, const long score, const std::string &member)
+int RedisSortedSet::Zadd(const string &key, const long score, const string &member)
 {
     return Zadd(key, score, member.data(), member.size());
 }
 
-int RedisSortedSet::ZrangeByScore(const std::string &key, const long min, const long max, std::vector<std::string> &members, const bool withscore)
+int RedisSortedSet::ZrangeByScore(const string &key, const long min, const long max, vector<string> &members, const bool withscore)
 {
-  std::string command = "ZRANGEBYSCORE %b %ld %ld";
+  string command = "ZRANGEBYSCORE %b %ld %ld";
   if(withscore){
     command = "ZRANGEBYSCORE %b %ld %ld WITHSCORES";
   }
@@ -87,7 +88,7 @@ int RedisSortedSet::ZrangeByScore(const std::string &key, const long min, const 
     		redisReply* childReply = reply->element[i];
     		if(childReply->type == REDIS_REPLY_STRING)
     		{
-    			std::string value;
+    			string value;
     			value.assign(childReply->str, childReply->len);
     			members.push_back(value);
     		}
@@ -111,7 +112,7 @@ int RedisSortedSet::ZrangeByScore(const std::string &key, const long min, const 
   return ret;
 }
 
-int RedisSortedSet::ZremRangeByScore(const std::string &key, const long min, const long max, long long &remove_count)
+int RedisSortedSet::ZremRangeByScore(const string &key, const long min, const long max, long long &remove_count)
 {
   redisReply *reply = (redisReply *)redisCommand(
     c_,
@@ -138,7 +139,7 @@ int RedisSortedSet::ZremRangeByScore(const std::string &key, const long min, con
     remove_count = reply->integer;//返回被删除的数目
     ret = 0;
   } else {
-    err_ = kUnknownErrror;
+    err_ = kUnknownError;
   }
 
   freeReplyObject(reply);

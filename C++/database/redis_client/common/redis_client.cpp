@@ -5,6 +5,7 @@
  *
  *        Version:  1.0
  *        Created:  2016-08-08
+ *         Update:  2016-09-19
  *
  *         Author:  zhihaibang
  *
@@ -14,7 +15,7 @@
 #include "hiredis.h"
 #include "redis_client.h"
 #include <string>
-
+#include <vector>
 using namespace std;
 
 RedisClient::RedisClient() :c_(NULL) {}
@@ -110,7 +111,6 @@ int RedisClient::DBSize(int *sz)
   return ret;
 }
 
-
 int RedisClient::Expire(const string &key, const long time)
 {
   redisReply *reply = (redisReply *)redisCommand(
@@ -141,8 +141,7 @@ int RedisClient::Expire(const string &key, const long time)
   return ret;
 }
 
-
-int RedisClient::DeleteKey(const std::string &key)
+int RedisClient::DeleteKey(const string &key)
 {
   redisReply *reply = (redisReply *)redisCommand(
     c_,
@@ -168,9 +167,54 @@ int RedisClient::DeleteKey(const std::string &key)
       ret = 0;
     }
   } else {
-    err_ = kUnknownErrror;
+    err_ = kUnknownError;
   }
   
+  freeReplyObject(reply);
+  return ret;
+}
+
+int RedisClient::GetAllKeys(vector<string> &keys)
+{ 
+  redisReply *reply = (redisReply *)redisCommand(c_,"keys *");
+  
+  keys.clear();
+  if (!reply) {
+    if (c_->err) {
+      err_ = kRedisContextError;
+      errstr_.assign(c_->errstr);
+    }
+    return -1;
+  }
+
+  int ret = -1,len=0;
+  switch (reply->type) {
+    case REDIS_REPLY_ARRAY:
+      len = reply->elements;
+      for(int i=0; i<len; ++i){
+        redisReply* childReply = reply->element[i];
+        if(childReply->type == REDIS_REPLY_STRING)
+        {
+          string key;
+          key.assign(childReply->str, childReply->len);
+          keys.push_back(key);
+        }
+      }
+      ret = 0;
+      break;
+    case REDIS_REPLY_NIL:
+      ret = 0;
+      break;
+    case REDIS_REPLY_ERROR:
+      err_ = kReplyError;
+      errstr_.assign(reply->str, reply->len);
+      break;
+    default:
+      err_ = kInvalidType;
+      errstr_.assign("invalid type of reply");
+      break;
+  }
+
   freeReplyObject(reply);
   return ret;
 }
@@ -185,4 +229,114 @@ const char *RedisClient::errstr() {
 
 RedisClient::~RedisClient() {
   Close();
+}
+
+
+int RedisClient::WatchKey(const string &key)
+{
+  redisReply *reply = (redisReply *)redisCommand(
+    c_,
+    "watch %b",
+    key.c_str(),
+    key.size()
+  );
+
+  if (!reply) {
+    if (c_->err) {
+      err_ = kRedisContextError;
+      errstr_.assign(c_->errstr);
+    }
+    return -1;
+  }
+
+  int ret = -1;
+  if (REDIS_REPLY_ERROR == reply->type) {
+    err_ = kReplyError;
+    errstr_.assign(reply->str, reply->len);
+  } else {
+    ret = 0;
+  }
+
+  freeReplyObject(reply);
+  return ret;
+}
+
+int RedisClient::BeginTransaction()
+{
+  redisReply *reply = (redisReply *)redisCommand(c_,"multi");
+
+  if (!reply) {
+    if (c_->err) {
+      err_ = kRedisContextError;
+      errstr_.assign(c_->errstr);
+    }
+    return -1;
+  }
+
+  int ret = -1;
+  if (REDIS_REPLY_ERROR == reply->type) {
+    err_ = kReplyError;
+    errstr_.assign(reply->str, reply->len);
+  } else {
+    ret = 0;
+  }
+
+  freeReplyObject(reply);
+  return ret;
+}
+
+int RedisClient::ExecTransaction()
+{
+  redisReply *reply = (redisReply *)redisCommand(c_,"exec");
+
+  if (!reply) {
+    if (c_->err) {
+      err_ = kRedisContextError;
+      errstr_.assign(c_->errstr);
+    }
+    return -1;
+  }
+
+  int ret = -1;
+  if(REDIS_REPLY_ERROR == reply->type)
+  {
+    err_ = kReplyError;
+  }
+  else if(REDIS_REPLY_NIL == reply->type)
+  {
+    err_ = kTransactionAbort;
+    errstr_.assign("transaction abort");
+  }
+  else
+  {
+    ret = 0;
+  }
+
+  freeReplyObject(reply);
+  return ret;
+}
+
+
+int RedisClient::Discard()
+{
+  redisReply *reply = (redisReply *)redisCommand(c_,"discard");
+
+  if (!reply) {
+    if (c_->err) {
+      err_ = kRedisContextError;
+      errstr_.assign(c_->errstr);
+    }
+    return -1;
+  }
+
+  int ret = -1;
+  if (REDIS_REPLY_ERROR == reply->type) {
+    err_ = kReplyError;
+    errstr_.assign(reply->str, reply->len);
+  } else {
+    ret = 0;
+  }
+
+  freeReplyObject(reply);
+  return ret;
 }
