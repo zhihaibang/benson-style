@@ -42,9 +42,18 @@ int RedisSortedSet::Zadd(const string &key, const long score, const char *member
   if (REDIS_REPLY_ERROR == reply->type) {
     err_ = kReplyError;
     errstr_.assign(reply->str, reply->len);
-  } else {
-    ret = 0;
-  }
+  } 
+  else if(REDIS_REPLY_INTEGER == reply->type)
+	{
+	  	if(reply->integer == 1)
+	  	{
+	  		ret = 0;
+	  	}
+	  	else if(reply->integer == 0)
+	  	{
+	  		errstr_ = "sortedset member has existed!";
+	  	}
+	}
 
   freeReplyObject(reply);
   return ret;
