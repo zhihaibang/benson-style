@@ -79,12 +79,18 @@ class RedisClient
     private function connect()
     {
     	try{
-    		$this->redis = new redis();
-			$this->con = $this->redis->connect($this->host, $this->port);
+    		$this->redisclient = new redis();
+			$this->con = $this->redisclient->connect($this->host, $this->port);
     	} catch (RedisException $e) {
             $this->setErrMsg($e, ConnectError, __FUNCTION__);
 			return false;
     	}
+		if(!$this->con)
+		{
+			$e = new RedisException();
+			$this->setErrMsg($e, ConnectError, __FUNCTION__);
+			return false;
+		}
     	return true;
     }
 
