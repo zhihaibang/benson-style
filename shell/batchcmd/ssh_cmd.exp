@@ -1,0 +1,22 @@
+#!/usr/bin/expect
+
+set ip [lindex $argv 0]
+set username [lindex $argv 1]
+set password [lindex $argv 2]
+set cmd [lindex $argv 3]
+set timeout 5
+spawn ssh $ip -l $username "$cmd"
+
+expect {
+    "No route to host" {
+    }
+    "(yes/no)?" {
+        send "yes\n"
+        expect "password"
+        send "$password\n"
+    }
+    "password:" {
+        send "$password\n"
+    }
+}
+expect eof
