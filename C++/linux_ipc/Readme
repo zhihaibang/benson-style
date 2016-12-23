@@ -1,0 +1,82 @@
+同一主机下进程间通信方式包括：
+管道
+共享内存
+信号
+信号量
+消息队列
+
+1.共享内存
+http://blog.csdn.net/okiwilldoit/article/details/50904809
+
+2.信号
+http://blog.csdn.net/okiwilldoit/article/details/50924864
+
+3.消息队列
+http://blog.csdn.net/ljianhui/article/details/10287879
+
+4.信号量
+http://blog.csdn.net/ljianhui/article/details/10243617
+
+
+
+========================================================================
+在linux下可以用ipcs命令查看共享内存，消息队列，信号量
+
+1. ipcs -m是查看共享内存
+[root@localhost ~]# ipcs -m
+------ Shared Memory Segments --------
+key        shmid      owner      perms      bytes      nattch     status      
+0xd85ece3b 0          root       666        16777232   17                      
+0xeb69b88f 32769      root       666        16777232   18                      
+0x6199acd5 1409026    root       666        16777232   17                      
+0xd925cbb0 1441795    root       666        16777232   18                      
+0xb9da9837 131076     root       666        16777232   3                       
+0x8aedee83 163845     root       666        16777232   4                       
+0x0096e37f 196614     root       666        16777232   9                       
+0x33a195cb 229383     root       666        16777232   10                      
+0x195152d4 950280     root       666        16777232   9                       
+0x2a662460 983049     root       666        16777232   10                      
+0xa116b9f7 327690     root       666        16777232   9                       
+0x9221cf43 360459     root       666        16777232   10                      
+0x00034248 393228     root       666        24080      1                       
+0x00034632 425997     root       666        640000     1                       
+0x00034a1b 458766     root       666        640000     1                       
+0xd4d472f9 1277967    root       666        16777232   17                      
+0xe7e3044d 1310736    root       666        67108880   18                      
+0x0c1c5fbd 1343505    root       666        16777232   17                      
+0x3f2b2909 1376274    root       666        67108880   18                      
+0xb8d1085c 1015827    root       666        16777232   9                       
+0x8be67ee8 1048596    root       666        16777232   10                      
+0xc1997f90 884757     root       666        16777232   9                       
+0xf2ae0924 917526     root       666        16777232   10
+
+其中key对应创建共享内存时传入参数key.
+nattch栏中列出连接在关联的共享内存段的进程数.
+
+======================================================================
+2. ipcs -q是查看消息队列
+[root@localhost ~]# ipcs -q
+------ Message Queues --------
+key        msqid      owner      perms      used-bytes   messages    
+0x8ec81e44 0          root       666        0            0           
+0xad2905ca 655361     root       666        0            0           
+0xef4c4848 65538      root       666        0            0           
+0x56003300 98307      root       666        48           1           
+0x4fc782ab 425988     root       666        48           1           
+0xf7806988 163845     root       666        0            0           
+0x8242a286 589830     root       666        48           1           
+0x5a8a8fc2 622599     root       666        0            0           
+0xee47d823 458760     root       666        0            0           
+0x970fafef 393225     root       666        0            0         
+
+其中key对应创建消息队列时传入参数key。
+
+======================================================================
+3. ipcs -s是查看信号量
+[root@localhost ~]# ipcs -s
+------ Semaphore Arrays --------
+key        semid      owner      perms      nsems     
+0x00000000 0          root       600        1         
+0x00000000 32769      root       600        1
+
+其中key对应创建信号量时传入参数key.
