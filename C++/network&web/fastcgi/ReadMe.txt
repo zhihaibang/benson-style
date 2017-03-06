@@ -16,6 +16,7 @@ server {
 
         location ~ wsp.cgi$ {           
             fastcgi_pass 127.0.0.1:9988;
+			#fastcgi_pass unix:/dev/shm/fcgisample.sock;
             fastcgi_index index.cgi;
             #fastcgi_param SCRIPT_FILENAME /root/zhb/cpp/my_practice/fastcgi/bin$fastcgi_script_name;
             include fastcgi_params;
