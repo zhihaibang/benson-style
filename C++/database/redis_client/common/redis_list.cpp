@@ -15,6 +15,7 @@
 #include "redis_client.h"
 #include "redis_list.h"
 #include <string>
+#include <sstream>
 using namespace std;
 
 int RedisList::Push(const string &key, const char *value, size_t len) 
@@ -90,6 +91,41 @@ int RedisList::Pop(const string &key, string &value)
       ret = -1;
       break;
   }
+
+  freeReplyObject(reply);
+  return ret;
+}
+
+int RedisList::BatchPush(const string &key, vector<string> &values)
+{
+	stringstream ss;
+	ss << "rpush %b ";
+	for(vector<string>::iterator it = values.begin(); it != values.end(); ++it){
+		ss << *it << " ";
+	}
+	redisReply *reply = (redisReply *)redisCommand(
+		c_,
+		ss.str().c_str(),
+		key.c_str(),
+		key.size()
+	);
+
+  if (!reply) 
+  {
+    if (c_->err) {
+      err_ = kRedisContextError;
+      errstr_.assign(c_->errstr);
+    }
+    return -1;
+  } 
+
+  int ret = -1;
+  if (REDIS_REPLY_ERROR == reply->type) {
+    err_ = kReplyError;
+    errstr_.assign(reply->str, reply->len);
+  } else {
+    ret = 0;//返回当前list的长度，不是新加的元素个数
+  } 
 
   freeReplyObject(reply);
   return ret;

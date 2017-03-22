@@ -27,6 +27,7 @@ class RedisList : public RedisClient {
     int Push(const string &key, const string &value);
     int Push(const string &key, const char *value, size_t len);
     int Pop(const string &key, string &value);
+	int BatchPush(const string &key, vector<string> &values);
 };
 
 #endif //__REDISLIST_H__

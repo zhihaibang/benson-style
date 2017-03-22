@@ -16,6 +16,8 @@
 #include "redis_sortedset.h"
 #include <string>
 #include <vector>
+#include <utility>
+#include <sstream>
 using namespace std;
 
 int RedisSortedSet::Zadd(const string &key, const long score, const char *member, size_t len)
@@ -42,18 +44,9 @@ int RedisSortedSet::Zadd(const string &key, const long score, const char *member
   if (REDIS_REPLY_ERROR == reply->type) {
     err_ = kReplyError;
     errstr_.assign(reply->str, reply->len);
-  } 
-  else if(REDIS_REPLY_INTEGER == reply->type)
-	{
-	  	if(reply->integer == 1)
-	  	{
-	  		ret = 0;
-	  	}
-	  	else if(reply->integer == 0)
-	  	{
-	  		errstr_ = "sortedset member has existed!";
-	  	}
-	}
+  } else {
+    ret = 0;
+  }
 
   freeReplyObject(reply);
   return ret;
@@ -146,6 +139,46 @@ int RedisSortedSet::ZremRangeByScore(const string &key, const long min, const lo
     errstr_.assign(reply->str, reply->len);
   } else if(REDIS_REPLY_INTEGER == reply->type){
     remove_count = reply->integer;//返回被删除的数目
+    ret = 0;
+  } else {
+    err_ = kUnknownError;
+  }
+
+  freeReplyObject(reply);
+  return ret;
+}
+
+
+int RedisSortedSet::BatchZadd(const string &key, vector<pair<long,string> > &members, int &count)
+{
+	stringstream ss;
+	ss << "zadd %b ";
+	for(vector<pair<long,string> >::iterator it = members.begin(); it != members.end(); ++it)
+	{		
+		ss << it->first << " " << it->second << " ";
+	}
+	
+  redisReply *reply = (redisReply *)redisCommand(
+    c_,
+    ss.str().c_str(),
+    key.c_str(),
+    key.size()
+  );
+
+  if (!reply) {
+    if (c_->err) {
+      err_ = c_->err;
+      errstr_.assign(c_->errstr);
+    }
+    return -1;
+  }
+
+  int ret = -1;
+  if (REDIS_REPLY_ERROR == reply->type) {
+    err_ = kReplyError;
+    errstr_.assign(reply->str, reply->len);
+  } else if(REDIS_REPLY_INTEGER == reply->type){
+    count = reply->integer;//返回新添加元素的个数
     ret = 0;
   } else {
     err_ = kUnknownError;

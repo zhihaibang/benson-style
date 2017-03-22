@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <utility>
 #include <sstream>
 
 #include "redis_client.h"
@@ -23,11 +24,11 @@ void redis_transaction();
 
 int main()
 {
-	redis_string();
-	redis_list();
-	redis_hash();
+	//redis_string();
+	//redis_list();
+	//redis_hash();
 	redis_sortedset();
-	redis_transaction();
+	//redis_transaction();
 	return 0;
 }
 
@@ -89,19 +90,48 @@ void redis_list()
 
 	string key = "lzhb";
 	string value = "list1";
+
+	struct timeval tv_begin, tv_end;
+	gettimeofday(&tv_begin, NULL);
+
 	ret = redis->Push(key,value);
+	
+	gettimeofday(&tv_end, NULL);
+	long interval = (tv_end.tv_sec - tv_begin.tv_sec)*1000000 + (tv_end.tv_usec - tv_begin.tv_usec);//单位是us
+
 	if(ret == 0){
 		printf("push list success,key=%s,value=%s\n", key.c_str(), value.c_str());
 	}else{
-		printf("push list fail,err_code:%d,err_msg:%s\n",redis->err(),redis->errstr());
+		printf("push list fail,err_code:%d,time:%ldus,err_msg:%s\n",redis->err(),interval,redis->errstr());
+	}
+	
+	//批量写入
+	vector<string> vec;
+	vec.push_back("list2");
+	vec.push_back("list3");
+	vec.push_back("list4");
+	
+	ret = redis->BatchPush(key,vec);
+	if(ret == 0){
+		printf("batch push list success\n");
+	}else{
+		printf("batch push list fail,err_code:%d,time:%ldus,err_msg:%s\n",redis->err(),interval,redis->errstr());
 	}
 	
 	ret = redis->Pop("lzhb",value);
 	if(ret == 0){
-		printf("pop list success,value=%s\n\n", value.c_str());
+		printf("pop list1 success,value=%s\n\n", value.c_str());
 	}else{
-		printf("pop list fail,err_code:%d,err_msg:%s\n\n", redis->err(), redis->errstr());
+		printf("pop list1 fail,err_code:%d,err_msg:%s\n\n", redis->err(), redis->errstr());
 	}
+	
+	ret = redis->Pop("lzhb",value);
+	if(ret == 0){
+		printf("pop list2 success,value=%s\n\n", value.c_str());
+	}else{
+		printf("pop list2 fail,err_code:%d,err_msg:%s\n\n", redis->err(), redis->errstr());
+	}
+	
 	redis->Close();
 }
 
@@ -194,22 +224,36 @@ void redis_sortedset()
 
 	string key = "zzhb";
 	
-	int count = 10;
+	int count = 5;
 	string member = "list";
+	string member1 = "batch";
 	long start = time(NULL);
+	
+	vector<pair<long,string> > batch_members;
 
 	for(int i=0;i<count;++i){
 		long score = time(NULL);
 		stringstream ss;
-		ss<<member<<i;		
+		ss<<member<<i;
 		ret = redis->Zadd(key, score, ss.str());
 		if(ret == 0){
 			//printf("zadd zset success,key=%s,score=%ld,member=%s\n", key.c_str(), score, member.c_str());
 		}else{
 			printf("zadd zset fail,err_code:%d,err_msg:%s\n", redis->err(), redis->errstr());
 		}
+		
+		stringstream ss1;
+		ss1<<member1<<i;
+		batch_members.push_back(make_pair<long,string>(score,ss1.str()));
 	}
-
+	
+	//批量插入redis
+	ret = redis->BatchZadd(key, batch_members, count);
+	if(ret == 0){
+		printf("batch zadd zset success,key=%s,count=%d\n", key.c_str(),count);
+	}else{
+		printf("batch zadd zset fail,err_code:%d,err_msg:%s\n", redis->err(), redis->errstr());
+	}
 	
 	long min = start;
 	long max = time(NULL);

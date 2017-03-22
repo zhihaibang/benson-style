@@ -20,6 +20,7 @@
 #include "redis_client.h"
 #include <string>
 #include <vector>
+#include <utility>
 #include <stdint.h>
 using namespace std;
 
@@ -29,6 +30,7 @@ class RedisSortedSet : public RedisClient {
     int Zadd(const string &key, const long score, const string &member);
     int ZrangeByScore(const string &key, const long min, const long max, vector<string> &members, const bool withscore = false);
     int ZremRangeByScore(const string &key, const long min, const long max, long long &remove_count);
+	int BatchZadd(const string &key, vector<pair<long,string> > &members, int &count);
 
 };
 

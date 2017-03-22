@@ -20,140 +20,125 @@ using namespace std;
 
 RedisClient::RedisClient() :c_(NULL) {}
 
-int RedisClient::Connect(const char *hostname, uint16_t port)
-{
-	hostname_.assign(hostname);
-	port_ = port;
+int RedisClient::Connect(const char *hostname, uint16_t port) {
+  hostname_.assign(hostname);
+  port_ = port;
 
-	Close();
-	struct timeval timeout = {1, 600000};
-	redisContext *c = redisConnectWithTimeout(hostname, port, timeout);//连接超时设置
+  Close();
+  struct timeval timeout = {1, 600000};
+  redisContext *c = redisConnectWithTimeout(hostname, port, timeout);
 
-	if (c == NULL || c->err) {
-	if (c) {
-	  redisFree(c);
-	}
+  if (c == NULL || c->err) {
+    if (c) {
+      redisFree(c);
+    }
 
-	return -1;
-	}
+    return -1;
+  }
 
-	struct timeval timeout2 = {1, 0};
-	redisSetTimeout(c, timeout2);//发送/接收超时设置
-
-	c_ = c;
-	return 0;
+  c_ = c;
+  return 0;
 }
 
-int RedisClient::Ping()
-{
-	int ret = 0;
+int RedisClient::Ping() {
+  int ret = 0;
 
-	if (!c_) {
-	ret = ReConnect();
-	}
+  if (!c_) {
+    ret = ReConnect();
+  }
 
-	return ret;
+  return ret;
 }
 
-int RedisClient::ReConnect() 
-{
-	Close();
+int RedisClient::ReConnect() {
+  Close();
 
-	struct timeval timeout = {1, 600000};
-	redisContext *c = redisConnectWithTimeout(hostname_.c_str(), port_, timeout);
+  struct timeval timeout = {1, 600000};
+  redisContext *c = redisConnectWithTimeout(hostname_.c_str(), port_, timeout);
 
-	if (c == NULL || c->err) {
-	if (c) {
-	  redisFree(c);
-	}
+  if (c == NULL || c->err) {
+    if (c) {
+      redisFree(c);
+    }
 
-	return -1;
-	}
+    return -1;
+  }
 
-	struct timeval timeout2 = {1, 0};
-	redisSetTimeout(c, timeout2);//发送/接收超时设置
-
-	c_ = c;
-	return 0;
+  c_ = c;
+  return 0;
 }
 
-void RedisClient::Close() 
-{
-	if (c_) {
-		redisFree(c_);
-		c_ = NULL;
-	}
+void RedisClient::Close() {
+  if (c_) {
+    redisFree(c_);
+    c_ = NULL;
+  }
 }
 
 int RedisClient::DBSize(int *sz) 
 {
-	redisReply *reply = (redisReply *)redisCommand(c_, "dbsize");
+  redisReply *reply = (redisReply *)redisCommand(c_, "dbsize");
 
-	if (!reply) 
-	{
-		if (c_->err) {
-		  err_ = c_->err;
-		  errstr_.assign(c_->errstr);
-		}
-		return -1;
-	}
-
-	int ret = -1;
-	switch (reply->type) {
-	case REDIS_REPLY_INTEGER:
-	  *sz = reply->integer;
-	  ret = 0;
-	  break;
-	case REDIS_REPLY_NIL:
-	  ret = 0;
-	  break;
-	case REDIS_REPLY_ERROR:
-	  err_ = kReplyError;
-	  errstr_.assign(reply->str, reply->len);
-	  break;
-	default:
+  if (!reply) {
+    if (c_->err) {
+      err_ = c_->err;
+      errstr_.assign(c_->errstr);
+    }
+    return -1;
+  }
+  
+  int ret = -1;
+  switch (reply->type) {
+    case REDIS_REPLY_INTEGER:
+      *sz = reply->integer;
+      ret = 0;
+      break;
+    case REDIS_REPLY_NIL:
+      ret = 0;
+      break;
+    case REDIS_REPLY_ERROR:
+      err_ = kReplyError;
+      errstr_.assign(reply->str, reply->len);
+      break;
+    default:
 	  err_ = kInvalidType;
-	  errstr_.assign("invalid type of reply");
-	  ret = -1;
-	  break;
-	}
+      errstr_.assign("invalid type of reply");
+      ret = -1;
+      break;
+  }
 
-	freeReplyObject(reply);
-	return ret;
+  freeReplyObject(reply);
+  return ret;
 }
 
 int RedisClient::Expire(const string &key, const long time)
 {
-	redisReply *reply = (redisReply *)redisCommand(
-	c_,
-	"expire %b %ld",
-	key.c_str(),
-	key.size(),
-	time
-	);
+  redisReply *reply = (redisReply *)redisCommand(
+    c_,
+    "expire %b %ld",
+    key.c_str(),
+    key.size(),
+    time
+  );
 
-	if (!reply) 
-	{
-		if (c_->err) {
-		  err_ = kRedisContextError;
-		  errstr_.assign(c_->errstr);
-		}
-		return -1;
-	}
+  if (!reply) {
+    if (c_->err) {
+      err_ = kRedisContextError;
+      errstr_.assign(c_->errstr);
+    }
+    return -1;
+  }
 
-	int ret = -1;
-	if (REDIS_REPLY_ERROR == reply->type) 
-	{
-		err_ = kReplyError;
-		errstr_.assign(reply->str, reply->len);
-	}
-	else
-	{
-		ret = 0;
-	}
+  int ret = -1;
+  if (REDIS_REPLY_ERROR == reply->type) {
+    err_ = kReplyError;
+    errstr_.assign(reply->str, reply->len);
+  } else {
+    ret = 0;
+  }
 
-	freeReplyObject(reply);
-	return ret;
+  freeReplyObject(reply);
+  return ret;
 }
 
 int RedisClient::DeleteKey(const string &key)
