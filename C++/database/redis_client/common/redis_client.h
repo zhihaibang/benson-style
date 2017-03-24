@@ -51,7 +51,12 @@ class RedisClient {
     int BeginTransaction();
     int ExecTransaction();
     int Discard();
-      
+     
+/*如果某些函数（如redisConnect， redisCommand（调用不成功，函数返回值为NULL或者REDIS_ERR，此时context结构体中的err成员为非零值，可能为以下几种常量
+REDIS_ERR_IO:当创建连接时（试着写socket或者读socket）发生的I/O错误。如果你在代码中包含了errno.h头文件，你便能得到准确的错误码。
+REDIS_ERR_EOF:redis服务端已经关闭了此连接。
+REDIS_ERR_PROTOCOL:服务端解析协议时发生了错误。
+REDIS_ERR_OTHER:其他错误。目前仅仅表示无法解析目标主机名的错误。*/
   protected:
     string hostname_;
     uint16_t port_;
