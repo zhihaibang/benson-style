@@ -1,5 +1,8 @@
 #include <iostream>
 #include <string>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 #include "json/json.h"
 
 using namespace std;
@@ -28,6 +31,12 @@ int genjson(Json::Value &root)
 {
 	long long status = 1232;
 	root["status"] = status;
+	
+	string ad = "0.45";
+	double ads = atof(ad.c_str());
+	cout<<ads<<endl;
+	root["double"] = ads;
+	
     root["msg"] = "";
 
     Json::Value data;
@@ -68,13 +77,21 @@ int genjson(Json::Value &root)
 int readjson(string &upload_id,int &code)
 {
 	const char* str = "{\"uploadid\": \"UP000000\",\"code\": 100,\"msg\": \"\",\"files\": \"\"}";  
-
-    Json::Reader reader;  
-    Json::Value root;  
-    if (reader.parse(str, root))  // reader将Json字符串解析到root，root将包含Json里所有子元素  
-    {  
-        upload_id = root["uploadid"].asString();  // 访问节点，upload_id = "UP000000"  
-        code = root["code"].asInt();    // 访问节点，code = 100 
-    }  
+	
+	Json::Reader reader(Json::Features::strictMode());
+	Json::Value root;
+	
+	try//加try、catch防止解析错误出现coredump
+	{ 
+		if (reader.parse(str, root))  // reader将Json字符串解析到root，root将包含Json里所有子元素  
+		{  
+			upload_id = root["uploadid"].asString();  // 访问节点，upload_id = "UP000000"  
+			code = root["code"].asInt();    // 访问节点，code = 100 
+		}
+	}
+	catch(...)
+	{
+		
+	}
 	return 0;
 }

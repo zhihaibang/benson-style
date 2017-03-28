@@ -22,7 +22,7 @@ int main()
   strcpy(server_addr.sun_path, "server_socket");
     
   /* bind with the local file */  
-  bind(serverfd, (struct sockaddr *)&server_addr, sizeof(server_addr));     
+  bind(serverfd, (struct sockaddr *)&server_addr, sizeof(server_addr));
     
   char buf[MAXLINE];
   struct sockaddr_un client_addr;  
