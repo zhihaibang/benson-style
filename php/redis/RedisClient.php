@@ -1,5 +1,7 @@
 <?php
-require_once('define.php');
+define('ConnectError',500);
+define('ReadError',501);
+define('WriteError',502);
 
 class RedisClient
 {

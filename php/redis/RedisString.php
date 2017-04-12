@@ -6,15 +6,14 @@
  * Time: 9:48
  */
 require_once('RedisClient.php');
-require_once('define.php');
 
 class RedisString extends RedisClient{
     /**
-     * ÉèÖÃkeyºÍvalueµÄÖµ
+     * è®¾ç½®keyå’Œvalueçš„å€¼
      *
      * @param  string key
      * @param  string value
-     * @return bool ³É¹¦·µ»Øtrue ·ñÔò·µ»Øfalse
+     * @return bool æˆåŠŸè¿”å›true å¦åˆ™è¿”å›false
      */
     public function set($key, $value)
     {
@@ -40,10 +39,10 @@ class RedisString extends RedisClient{
 
 
     /**
-     * »ñÈ¡ÓĞ¹ØÖ¸¶¨¼üµÄÖµ
+     * è·å–æœ‰å…³æŒ‡å®šé”®çš„å€¼
      *
      * @param  string key
-     * @return string»òbool Èç¹û¼ü²»´æÔÚ£¬Ôò·µ»Ø FALSE¡£·ñÔò£¬·µ»ØÖ¸¶¨¼ü¶ÔÓ¦µÄvalueÖµ
+     * @return stringæˆ–bool å¦‚æœé”®ä¸å­˜åœ¨ï¼Œåˆ™è¿”å› FALSEã€‚å¦åˆ™ï¼Œè¿”å›æŒ‡å®šé”®å¯¹åº”çš„valueå€¼
      */
     public function get($key)
     {

@@ -6,12 +6,11 @@
  * Time: 9:48
  */
 require_once('RedisClient.php');
-require_once('define.php');
 
 class RedisSortedSet extends RedisClient{
 
     /**
-     * Ìí¼ÓÔªËØµ½SortedSetÖĞ
+     * æ·»åŠ å…ƒç´ åˆ°SortedSetä¸­
      *
      * @param $key
      * @param $score
@@ -42,7 +41,7 @@ class RedisSortedSet extends RedisClient{
 
 
     /**
-     * ·µ»ØÓĞĞò¼¯ key ÖĞ£¬ËùÓĞ score Öµ½éÓÚ min ºÍ max Ö®¼ä(°üÀ¨µÈÓÚ min »ò max )µÄ³ÉÔ±
+     * è¿”å›æœ‰åºé›† key ä¸­ï¼Œæ‰€æœ‰ score å€¼ä»‹äº min å’Œ max ä¹‹é—´(åŒ…æ‹¬ç­‰äº min æˆ– max )çš„æˆå‘˜
      *
      * @param $key
      * @param $min
@@ -77,8 +76,8 @@ class RedisSortedSet extends RedisClient{
 
 
     /**
-     * ·µ»ØÓĞĞò¼¯ keyÖĞ³ÉÔ± memberµÄÅÅÃû¡£ÆäÖĞÓĞĞò¼¯³ÉÔ±°´ score ÖµµİÔö(´ÓĞ¡µ½´ó)Ë³ĞòÅÅÁĞ
-     * ÅÅÃûÒÔ 0 Îªµ×£¬Ò²¾ÍÊÇËµ£¬ score Öµ×îĞ¡µÄ³ÉÔ±ÅÅÃûÎª 0
+     * è¿”å›æœ‰åºé›† keyä¸­æˆå‘˜ memberçš„æ’åã€‚å…¶ä¸­æœ‰åºé›†æˆå‘˜æŒ‰ score å€¼é€’å¢(ä»å°åˆ°å¤§)é¡ºåºæ’åˆ—
+     * æ’åä»¥ 0 ä¸ºåº•ï¼Œä¹Ÿå°±æ˜¯è¯´ï¼Œ score å€¼æœ€å°çš„æˆå‘˜æ’åä¸º 0
      *
      * @param $key
      * @param $member

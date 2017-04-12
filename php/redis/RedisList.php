@@ -6,15 +6,14 @@
  * Time: 10:24
  */
 require_once('RedisClient.php');
-require_once('define.php');
 
 class RedisList extends RedisClient{
     /**
-     * ÓÉÁĞ±íÍ·²¿Ìí¼Ó×Ö·û´®Öµ¡£Èç¹û²»´æÔÚ¸Ã¼üÔò´´½¨¸ÃÁĞ±í¡£Èç¹û¸Ã¼ü´æÔÚ£¬¶øÇÒ²»ÊÇÒ»¸öÁĞ±í£¬·µ»ØFALSE
+     * ç”±åˆ—è¡¨å¤´éƒ¨æ·»åŠ å­—ç¬¦ä¸²å€¼ã€‚å¦‚æœä¸å­˜åœ¨è¯¥é”®åˆ™åˆ›å»ºè¯¥åˆ—è¡¨ã€‚å¦‚æœè¯¥é”®å­˜åœ¨ï¼Œè€Œä¸”ä¸æ˜¯ä¸€ä¸ªåˆ—è¡¨ï¼Œè¿”å›FALSE
      *
      * @param  string key
      * @param  string value
-     * @return int»òbool ³É¹¦·µ»ØÊı×é³¤¶È£¬Ê§°Üfalse
+     * @return intæˆ–bool æˆåŠŸè¿”å›æ•°ç»„é•¿åº¦ï¼Œå¤±è´¥false
      */
     public function lpush($key, $value)
     {
@@ -40,11 +39,11 @@ class RedisList extends RedisClient{
 
 
     /**
-     * ÓÉÁĞ±íÎ²²¿Ìí¼Ó×Ö·û´®Öµ¡£Èç¹û²»´æÔÚ¸Ã¼üÔò´´½¨¸ÃÁĞ±í¡£Èç¹û¸Ã¼ü´æÔÚ£¬¶øÇÒ²»ÊÇÒ»¸öÁĞ±í£¬·µ»ØFALSE
+     * ç”±åˆ—è¡¨å°¾éƒ¨æ·»åŠ å­—ç¬¦ä¸²å€¼ã€‚å¦‚æœä¸å­˜åœ¨è¯¥é”®åˆ™åˆ›å»ºè¯¥åˆ—è¡¨ã€‚å¦‚æœè¯¥é”®å­˜åœ¨ï¼Œè€Œä¸”ä¸æ˜¯ä¸€ä¸ªåˆ—è¡¨ï¼Œè¿”å›FALSE
      *
      * @param  string key
      * @param  string value
-     * @return int»òbool ³É¹¦·µ»ØÊı×é³¤¶È£¬Ê§°Üfalse
+     * @return intæˆ–bool æˆåŠŸè¿”å›æ•°ç»„é•¿åº¦ï¼Œå¤±è´¥false
      */
     public function rpush($key, $value)
     {
@@ -70,10 +69,10 @@ class RedisList extends RedisClient{
 
 
     /**
-     * ·µ»ØºÍÒÆ³ıÁĞ±íµÄµÚÒ»¸öÔªËØ
+     * è¿”å›å’Œç§»é™¤åˆ—è¡¨çš„ç¬¬ä¸€ä¸ªå…ƒç´ 
      *
      * @param  string key
-     * @return string»òbool ³É¹¦·µ»ØµÚÒ»¸öÔªËØµÄÖµ £¬Ê§°Ü·µ»Øfalse
+     * @return stringæˆ–bool æˆåŠŸè¿”å›ç¬¬ä¸€ä¸ªå…ƒç´ çš„å€¼ ï¼Œå¤±è´¥è¿”å›false
      */
     public function lpop($key)
     {
@@ -98,10 +97,10 @@ class RedisList extends RedisClient{
 
 
     /**
-     * ·µ»ØµÄÁĞ±íµÄ³¤¶È¡£Èç¹ûÁĞ±í²»´æÔÚ»òÎª¿Õ£¬¸ÃÃüÁî·µ»Ø0¡£Èç¹û¸Ã¼ü²»ÊÇÁĞ±í£¬¸ÃÃüÁî·µ»ØFALSE
+     * è¿”å›çš„åˆ—è¡¨çš„é•¿åº¦ã€‚å¦‚æœåˆ—è¡¨ä¸å­˜åœ¨æˆ–ä¸ºç©ºï¼Œè¯¥å‘½ä»¤è¿”å›0ã€‚å¦‚æœè¯¥é”®ä¸æ˜¯åˆ—è¡¨ï¼Œè¯¥å‘½ä»¤è¿”å›FALSE
      *
      * @param  string key
-     * @return int»òbool ³É¹¦·µ»ØÊı×é³¤¶È£¬Ê§°Üfalse
+     * @return intæˆ–bool æˆåŠŸè¿”å›æ•°ç»„é•¿åº¦ï¼Œå¤±è´¥false
      */
     public function llen($key)
     {
@@ -126,12 +125,12 @@ class RedisList extends RedisClient{
 
 
     /**
-     * ÎªÁĞ±íÖ¸¶¨µÄË÷Òı¸³ĞÂµÄÖµ,Èô²»´æÔÚ¸ÃË÷Òı·µ»Øfalse.
+     * ä¸ºåˆ—è¡¨æŒ‡å®šçš„ç´¢å¼•èµ‹æ–°çš„å€¼,è‹¥ä¸å­˜åœ¨è¯¥ç´¢å¼•è¿”å›false.
      *
      * @param  string key
      * @param  int index
      * @param  string value
-     * @return bool ³É¹¦·µ»Øtrue,Ê§°Üfalse
+     * @return bool æˆåŠŸè¿”å›true,å¤±è´¥false
      */
     public function lset($key, $index, $value)
     {
@@ -157,13 +156,13 @@ class RedisList extends RedisClient{
 
 
     /**
-     * ·µ»ØÖ¸¶¨¼ü´æ´¢ÔÚÁĞ±íÖĞÖ¸¶¨µÄÔªËØ¡£
-     * 0µÚÒ»¸öÔªËØ£¬1µÚ¶ş¸ö¡­ -1×îºóÒ»¸öÔªËØ£¬-2µÄµ¹ÊıµÚ¶ş¡­
-     * ´íÎóµÄË÷Òı»ò¼ü²»Ö¸ÏòÁĞ±íÔò·µ»ØFALSE
+     * è¿”å›æŒ‡å®šé”®å­˜å‚¨åœ¨åˆ—è¡¨ä¸­æŒ‡å®šçš„å…ƒç´ ã€‚
+     * 0ç¬¬ä¸€ä¸ªå…ƒç´ ï¼Œ1ç¬¬äºŒä¸ªâ€¦ -1æœ€åä¸€ä¸ªå…ƒç´ ï¼Œ-2çš„å€’æ•°ç¬¬äºŒâ€¦
+     * é”™è¯¯çš„ç´¢å¼•æˆ–é”®ä¸æŒ‡å‘åˆ—è¡¨åˆ™è¿”å›FALSE
      *
      * @param  string key
      * @param  int index
-     * @return string»òbool ³É¹¦·µ»ØÖ¸¶¨ÔªËØµÄÖµ£¬Ê§°Üfalse
+     * @return stringæˆ–bool æˆåŠŸè¿”å›æŒ‡å®šå…ƒç´ çš„å€¼ï¼Œå¤±è´¥false
      */
     public function lget($key, $index)
     {

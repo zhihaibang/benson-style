@@ -6,12 +6,11 @@
  * Time: 9:48
  */
 require_once('RedisClient.php');
-require_once('define.php');
 
 class RedisSet extends RedisClient{
 
     /**
-     * Ìí¼ÓÔªËØµ½setÖĞ
+     * æ·»åŠ å…ƒç´ åˆ°setä¸­
      *
      * @param $key
      * @param $value
@@ -41,7 +40,7 @@ class RedisSet extends RedisClient{
 
 
     /**
-     * ·µ»Ø¼¯ºÏ key ÖĞµÄËùÓĞ³ÉÔ±,²»´æÔÚµÄ key ±»ÊÓÎª¿Õ¼¯ºÏ¡£
+     * è¿”å›é›†åˆ key ä¸­çš„æ‰€æœ‰æˆå‘˜,ä¸å­˜åœ¨çš„ key è¢«è§†ä¸ºç©ºé›†åˆã€‚
      *
      * @param $key
      * @return bool,array
@@ -68,8 +67,8 @@ class RedisSet extends RedisClient{
     }
 
     /**
-     * ÅĞ¶Ï member ÔªËØÊÇ·ñ¼¯ºÏ key µÄ³ÉÔ±
-     * Èç¹û member ÔªËØÊÇ¼¯ºÏµÄ³ÉÔ±£¬·µ»Ø 1 ¡£Èç¹û member ÔªËØ²»ÊÇ¼¯ºÏµÄ³ÉÔ±£¬»ò key ²»´æÔÚ£¬·µ»Ø 0 ¡£
+     * åˆ¤æ–­ member å…ƒç´ æ˜¯å¦é›†åˆ key çš„æˆå‘˜
+     * å¦‚æœ member å…ƒç´ æ˜¯é›†åˆçš„æˆå‘˜ï¼Œè¿”å› 1 ã€‚å¦‚æœ member å…ƒç´ ä¸æ˜¯é›†åˆçš„æˆå‘˜ï¼Œæˆ– key ä¸å­˜åœ¨ï¼Œè¿”å› 0 ã€‚
      *
      * @param $key
      * @param $value
@@ -97,11 +96,11 @@ class RedisSet extends RedisClient{
     }
 
     /**
-     * ÒÆ³ı¼¯ºÏ key ÖĞµÄÒ»¸ö»ò¶à¸ö member ÔªËØ£¬²»´æÔÚµÄmemberÔªËØ»á±»ºöÂÔ
+     * ç§»é™¤é›†åˆ key ä¸­çš„ä¸€ä¸ªæˆ–å¤šä¸ª member å…ƒç´ ï¼Œä¸å­˜åœ¨çš„memberå…ƒç´ ä¼šè¢«å¿½ç•¥
      *
      * @param $key
      * @param $value
-     * @return bool,int,±»³É¹¦ÒÆ³ıµÄÔªËØµÄÊıÁ¿£¬²»°üÀ¨±»ºöÂÔµÄÔªËØ
+     * @return bool,int,è¢«æˆåŠŸç§»é™¤çš„å…ƒç´ çš„æ•°é‡ï¼Œä¸åŒ…æ‹¬è¢«å¿½ç•¥çš„å…ƒç´ 
      */
     public function srem($key,$value)
     {
