@@ -65,6 +65,8 @@ $value = $redis_client->zrangebyscore('zzhb',2,10,$option);
 var_dump($value);
 $value = $redis_client->zrank('zzhb','value3');
 var_dump($value);
+$value = $redis_client->zremrangebyscore('zzhb',10,15);
+var_dump('delete:'.$value);
 
 //delete操作
 $result = $redis_client->deleteKey("zhb",'hzhb');

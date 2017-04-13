@@ -105,9 +105,33 @@ class RedisSortedSet extends RedisClient{
     }
 
 
+    /**
+     * 移除有序集key中，所有score值介于min和max之间(包括等于min或max)的成员
+     *
+     * @param $key
+     * @param $min
+     * @param $max
+     * @return bool,int,被移除成员的数量
+     */
+    public function zremrangebyscore($key, $min, $max)
+    {
+        $this->clearERR();
 
+        $key = trim($key);
 
+        if(!$this->checkConnection()){
+            return false;
+        }
 
+        $result = false;
 
+        try{
+            $result = $this->redis->ZREMRANGEBYSCORE($key, $min, $max);
+        }catch(RedisException $e){
+            $this->setErrMsg($e, ReadError, __FUNCTION__);
+        }
+
+        return $result;
+    }
 
 }
