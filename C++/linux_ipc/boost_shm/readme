@@ -1,0 +1,1 @@
+boost库interprocess在共享内存中存储map，vector等stl容器
