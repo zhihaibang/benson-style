@@ -1,1 +1,2 @@
-boost库interprocess在共享内存中存储map，vector等stl容器
+boost库interprocess在共享内存中存储map，vector等stl容器。
+基于mmap实现，文件存放在/dev/shm/目录下。
