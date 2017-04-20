@@ -1,2 +1,7 @@
 boost库interprocess在共享内存中存储map，vector等stl容器。
 基于mmap实现，文件存放在/dev/shm/目录下。
+
+注意：两个进程不能读取不同进程的string类型数据。
+
+shm_map_write.cpp是基本数据类型的读写，
+shm_map_write_c.cpp是复杂数据类型的读写，包括string，map，vector等容器

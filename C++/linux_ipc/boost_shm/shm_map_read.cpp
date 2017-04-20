@@ -17,6 +17,8 @@
 using namespace boost::interprocess;
 using std::string;
 
+#define MAX_NAME_SIZE 32*1024
+
 class Item
 {
     public:
@@ -25,7 +27,7 @@ class Item
 
         int id;
         int size;
-        string name;
+        char name[MAX_NAME_SIZE];
 };
 
 typedef int KeyType;
@@ -41,11 +43,19 @@ int main()
     try {
         // init
         managed_shared_memory segment(open_only, "SharedMemory");
+		
+		struct timeval tv_begin, tv_end;
+		gettimeofday(&tv_begin, NULL);
 
         MyMap * mymap = segment.find<MyMap>("MyMap").first;
-
+		
+		gettimeofday(&tv_end, NULL);
+		long interval = (tv_end.tv_sec - tv_begin.tv_sec)*1000000 + (tv_end.tv_usec - tv_begin.tv_usec);//单位是us
+		
+		printf("get map cost time:%lldus\n", interval);
+		
         for (MyMap::iterator it = mymap->begin(); it != mymap->end(); it++) {
-            printf("%d ", it->second.id);
+            printf("%d-%s ", it->second.id, it->second.name);
         }
         printf("\n");
 

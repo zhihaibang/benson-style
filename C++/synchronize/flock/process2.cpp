@@ -13,10 +13,13 @@ int main(void)
 		printf("file open error,errno=%d!\n",errno);
 		return -1;
 	}   
-    flock(fp->_fileno, LOCK_EX); //文件加锁  
+    if(flock(fp->_fileno, LOCK_SH) != 0)//文件加共享锁
+    {
+    	printf("file lock by others\n");//加锁失败，阻塞
+    } 
     while(1) //进入循环  
     {     
-        printf("%d\n", i++);  
+        printf("process2-sh\n");
         sleep(1);  
     }     
     flock(fp->_fileno, LOCK_UN); //释放文件锁  
