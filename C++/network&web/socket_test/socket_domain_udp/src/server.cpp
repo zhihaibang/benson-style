@@ -25,7 +25,7 @@ int main()
   bind(serverfd, (struct sockaddr *)&server_addr, sizeof(server_addr));
     
   char buf[MAXLINE];
-  struct sockaddr_un client_addr;  
+  struct sockaddr_un client_addr;
   socklen_t len = sizeof(client_addr);  
 
   while(1)  
