@@ -5,6 +5,7 @@
 #include <unistd.h>  
 #include <stdlib.h>  
 #include <stdio.h>  
+#include <errno.h>
 using namespace std;
 
 #define MAXLINE 60  
@@ -26,14 +27,29 @@ int main()
     
   char buf[MAXLINE];
   struct sockaddr_un client_addr;
-  socklen_t len = sizeof(client_addr);  
+  socklen_t len = sizeof(client_addr);
 
   while(1)  
   {  
     int n = recvfrom(serverfd,buf,sizeof(buf),0,(struct sockaddr *)&client_addr,&len);
-    if(n>0){
-      cout<<"received:"<<buf<<endl;
-    } 
+    if(n > 0){
+		cout<<"received:"<<buf<<endl;
+		for(int i = 0; i < n; i++)//将从client接收到的字母转化为大写，回送给client
+               buf[i] = toupper(buf[i]);
+		n = sendto(serverfd,buf,sizeof(buf),0,(struct sockaddr *)&client_addr,sizeof(client_addr));
+		if(n <= 0)
+		{
+			cout<<"fail to send,errno="<<errno<<endl;
+		}
+		else
+		{
+			cout<<"success to send,buf="<<buf<<endl;
+		}
+    }
+	else
+	{
+		cout<<"fail to received,errno="<<errno<<endl;
+	}
   }  
   close(serverfd);  
   return 0;  
