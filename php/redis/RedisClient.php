@@ -185,7 +185,7 @@ class RedisClient
         $result = false;
 
         try{
-            $result = $this->redisclient->delete($key);
+            $result = $this->redis->delete($key);
         }catch(RedisException $e){
             $this->setErrMsg($e, WriteError, __FUNCTION__);
         }
@@ -210,7 +210,7 @@ class RedisClient
         $result = false;
 
         try{
-            $result = $this->redisclient->expire($key, $time);
+            $result = $this->redis->expire($key, $time);
         }catch(RedisException $e){
             $this->setErrMsg($e, WriteError, __FUNCTION__);
         }
