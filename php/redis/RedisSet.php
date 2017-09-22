@@ -63,7 +63,7 @@ class RedisSet extends RedisClient{
         }
 
         try{
-            $result = call_user_func_array(array($this->redisclient, 'sAdd'), $args);
+            $result = call_user_func_array(array($this->redis, 'sAdd'), $args);
         }catch(RedisException $e){
             $this->setErrMsg($e, WriteError, __FUNCTION__);
         }
