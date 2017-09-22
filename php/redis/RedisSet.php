@@ -38,6 +38,39 @@ class RedisSet extends RedisClient{
         return $result;
     }
 
+    /**
+    * 批量添加元素到set中
+    * @param  键名，元素数组   
+    * @return 添加成功的元素数目
+    */
+    public function sadds($key, $members)
+    {
+        $this->clearERR();
+
+        $key = trim($key);
+        
+        if(!$this->checkConnection()){
+            return false;
+        }
+
+        $result = false;
+        
+        $args = array();
+        array_push($args, $key);
+        foreach($members as $key => $value)
+        {
+            array_push($args, $value);
+        }
+
+        try{
+            $result = call_user_func_array(array($this->redisclient, 'sAdd'), $args);
+        }catch(RedisException $e){
+            $this->setErrMsg($e, WriteError, __FUNCTION__);
+        }
+
+        return $result;
+    }
+
 
     /**
      * 返回集合 key 中的所有成员,不存在的 key 被视为空集合。

@@ -171,23 +171,46 @@ class RedisClient
     /**
      * 删除指定的键
      *
-     * @param  一个键，或不确定数目的参数，键值的数组：key1 key2 key3 … keyN
-     * @return int 删除成功的项数
+     * @param  一个键
+     * @return 成功返回删除键的数目，失败返回false
      */
-    public function deleteKey()
+    public function deleteKey($key)
     {
-    	$this->clearERR();
+        $this->clearERR();
 
-    	$keys = func_get_args();
-
-    	if(!$this->checkConnection()){
+        if(!$this->checkConnection()){
             return false;
         }
 
         $result = false;
 
         try{
-        	$result = $this->redis->delete($keys);
+            $result = $this->redisclient->delete($key);
+        }catch(RedisException $e){
+            $this->setErrMsg($e, WriteError, __FUNCTION__);
+        }
+
+        return $result;
+    }
+
+    /**
+     * 为给定key设置生存时间
+     *
+     * @param  一个键, 生存时间(秒)
+     * @return bool,成功true，失败false
+     */
+    public function expire($key, $time)
+    {
+        $this->clearERR();
+
+        if(!$this->checkConnection()){
+            return false;
+        }
+
+        $result = false;
+
+        try{
+            $result = $this->redisclient->expire($key, $time);
         }catch(RedisException $e){
             $this->setErrMsg($e, WriteError, __FUNCTION__);
         }
